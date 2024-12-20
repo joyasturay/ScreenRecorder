@@ -16,11 +16,6 @@ A simple web application to record your screen and download or view the recorded
 - JavaScript (MediaRecorder API)
 - Node.js (Optional for hosting via ngrok or any other server)
 
-## Demo
-
-You can try out the live demo hosted at:
-
-[Live Demo Link](#) *(Replace with your live demo URL)*
 
 ## Installation
 
