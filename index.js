@@ -2,28 +2,35 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const app = express();
+const port = 3000;
 
-//storage options for multer (saving files locally)
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); 
-    },
-    filename: (req, file, cb) => {
-        cb(null, `recorded-video-${Date.now()}.webm`); 
-    },
+//  multer for file uploading
+const upload = multer({ dest: 'uploads/' });
+
+// Set the view engine to EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Serve the page for recording (index.ejs)
+app.get('/', (req, res) => {
+    res.render('index'); // Rendering the EJS view
 });
 
+// Upload endpoint for receiving the video
+app.post('/upload', upload.single('video'), (req, res) => {
+    const file = req.file;
+    if (!file) {
+        return res.status(400).send('No file uploaded.');
+    }
 
-const upload = multer({ storage: storage });
+    const videoUrl = `/uploads/${file.filename}`; // URL where the video will be available
+    res.json({ videoUrl }); // Return the URL for viewing the video
+});
 
-
+// Serve static files 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.post('/upload', upload.single('video'), (req, res) => {
-    const videoUrl = `/uploads/${req.file.filename}`; 
-    res.json({ videoUrl });
-});
 
-app.listen(3000, () => {
-    console.log('Server started on http://localhost:3000');
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
